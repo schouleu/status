@@ -106,7 +106,8 @@ the status information."
       (let ((saved-status (buffer-string)))
 	(condition-case nil
 	    (status-build)
-	  (error (progn (erase-buffer) (insert saved-status))))))))
+	  (error (with-current-buffer status-module-buffer
+		   (erase-buffer) (insert saved-status))))))))
 
 (defun toggle-status ()
   (interactive)
