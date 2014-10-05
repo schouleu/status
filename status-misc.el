@@ -30,8 +30,10 @@
   "face for active misc item"
   :group 'status-misc)
 
+(delq 'appt-mode-string global-mode-string)
 (defun status-misc ()
-  (propertize (format "%s" (if compilation-in-progress "Compiling" ""))
-	      'face 'status-misc-face))
+  (format "%s%s"
+	  (propertize (if compilation-in-progress "Compiling " "") 'face 'status-misc-face)
+	  (or appt-mode-string "")))
 
 (provide 'status-misc)
