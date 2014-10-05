@@ -20,7 +20,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
 
-(require 'status-activity)
+;;(require 'status-activity)
+(require 'status-workgroups)
 (require 'status-project-manager)
 (require 'status-purple)
 (require 'status-gnus)
@@ -34,7 +35,7 @@
 (defconst status-buffer (get-buffer " *Minibuf-0*")
   "Buffer in which write the status information.")
 
-(defcustom status-format '((status-activity status-project-manager)
+(defcustom status-format '((status-workgroups status-project-manager)
 			   (status-purple status-gnus status-battery status-date))
   "Status format list"
   :group 'status)
