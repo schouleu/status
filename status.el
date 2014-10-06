@@ -33,8 +33,9 @@
   "Status management group."
   :group 'convenience)
 
-(defconst status-buffer (get-buffer " *Minibuf-0*")
-  "Buffer in which write the status information.")
+(defcustom status-minibuffer-format " *status-minbuf*"
+  "Format of name for minibuffer to be used to display status lines."
+  :group 'status)
 
 (defcustom status-format '((status-workgroups status-project-manager status-misc)
 			   (status-purple status-gnus status-battery status-date))
@@ -81,21 +82,27 @@ the status information."
 (defun status-build ()
   (let* ((items (mapcar 'status-build-items status-format))
 	 (width (status-window-width)))
-    (with-current-buffer status-buffer
-      (erase-buffer)
-      (let* ((markers (mapcar 'status-insert-item items)))
-	(when (>= (length items) 2)
-	  (let ((space (/ (- (- width 1) (status-current-position))
-			  (1- (length items)))))
-	    (dolist (marker markers)
-	      (goto-char (marker-position marker))
-	      (insert (propertize " " 'display `((space :width (,space))))))))))))
+    (erase-buffer)
+    (let* ((markers (mapcar 'status-insert-item items)))
+      (when (>= (length items) 2)
+	(let ((space (/ (- (- width 1) (status-current-position))
+			(1- (length items)))))
+	  (dolist (marker markers)
+	    (goto-char (marker-position marker))
+	    (insert (propertize " " 'display `((space :width (,space)))))))))))
+
+(defmacro for-each-minibuf (&rest body)
+  (declare (indent defun))
+  `(dolist (f (frame-list))
+     (with-selected-frame f
+       (with-current-buffer (window-buffer (minibuffer-window f))
+	 ,@body))))
 
 (defun status-update ()
   "Update the status informations."
   (interactive)
   (when (= (minibuffer-depth) 0)
-    (with-current-buffer status-buffer
+    (for-each-minibuf
       (let ((saved-status (buffer-string)))
 	(condition-case nil
 	    (status-build)
@@ -107,10 +114,13 @@ the status information."
       (progn (when status-refresh-timer
 	       (cancel-timer status-refresh-timer)
 	       (setq status-refresh-timer nil))
-	     (with-current-buffer status-buffer
-	       (erase-buffer))
+	     (for-each-minibuf
+	       (set-window-buffer (minibuffer-window) (get-buffer-create " *Minibuf-0*") t)
+	       (kill-buffer (current-buffer)))
 	     (message (propertize "Status disabled."
 				  'face 'error)))
+    (for-each-minibuf
+      (set-window-buffer (minibuffer-window) (generate-new-buffer status-minibuffer-format) t))
     (status-update)
     (unless (= 0 status-refresh-timer-delay)
       (setq status-refresh-timer
