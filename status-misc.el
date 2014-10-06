@@ -33,8 +33,8 @@
 
 (delq 'appt-mode-string global-mode-string)
 (defun status-misc ()
-  (format "%s%s"
-	  (propertize (if compilation-in-progress "Compiling " "") 'face 'status-misc-face)
-	  (or appt-mode-string "")))
+  (concat
+    (propertize (if compilation-in-progress "Compiling " "") 'face 'status-misc-face)
+    (or appt-mode-string "")))
 
 (provide 'status-misc)
