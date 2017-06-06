@@ -101,7 +101,7 @@ the status information."
 (defun status-update ()
   "Update the status informations."
   (interactive)
-  (when (= (minibuffer-depth) 0)
+  (when (and status-activated (= (minibuffer-depth) 0))
     (for-each-minibuf
       (let ((saved-status (buffer-string)))
 	(condition-case nil
