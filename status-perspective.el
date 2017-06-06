@@ -36,7 +36,7 @@
 (eval-after-load "perspective"
   '(progn (defun status-perspective ()
 	    (propertize (persp-name persp-curr)
-	    		'face 'status-activity-face))
+	    		'face 'status-perspective-face))
 	  (add-hook 'persp-switch-hook 'status-update)))
 
 (provide 'status-perspective)
