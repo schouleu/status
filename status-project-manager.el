@@ -36,7 +36,7 @@
 
 (eval-after-load "project-manager"
   '(progn (defun status-project-manager ()
-	    (let ((name (project-name current-project)))
+	    (let ((name (pm-project-name current-project)))
 	      (propertize (format status-project-manager-fmt name)
 			'face 'status-project-manager-face)))))
 
